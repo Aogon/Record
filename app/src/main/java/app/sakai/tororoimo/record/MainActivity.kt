@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -15,28 +16,34 @@ class MainActivity : AppCompatActivity() {
     private var rec: MediaRecorder? = null
 
     /* 録音先のパス */
-    val filePath =
-        Environment.getExternalStorageDirectory().toString() + "/sample2.wav"
+    private val filePath: String? =
+        Environment.getExternalStorageDirectory().toString() + "/sample.wav"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         recordButton.setOnClickListener {
             startRecord()
+
         }
 
         stopButton.setOnClickListener {
             stopRecord()
+
         }
+
 
         playButton.setOnClickListener {
             startPlay()
+
         }
 
         playStopButton.setOnClickListener {
             stopPlay()
+
         }
     }
 
@@ -49,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         var wavFile: File? = File(filePath)
         if (wavFile!!.exists()) {
             wavFile.delete()
+            Log.d("hoge", "ifの実行")
         }
         wavFile = null
         try {
@@ -60,10 +68,12 @@ class MainActivity : AppCompatActivity() {
             rec!!.setOutputFile(filePath)
             rec!!.prepare()
             rec!!.start()
+            Log.d("hoge", "tryの実行")
 
 
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("hoge", "catchの実行")
         }
     }
 
@@ -79,14 +89,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startPlay() {
-        ;
+
         try {
             mp = MediaPlayer()
             mp!!.setDataSource(filePath)
             mp!!.prepare()
             mp!!.start()
+            Log.d("hoge", "1")
         } catch (e: IOException) {
             e.printStackTrace()
+            Log.d("hoge", "2")
         }
     }
 
