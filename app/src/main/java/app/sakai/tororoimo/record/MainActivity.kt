@@ -1,14 +1,18 @@
 package app.sakai.tororoimo.record
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
+private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,10 +23,20 @@ class MainActivity : AppCompatActivity() {
     private val filePath: String? =
         Environment.getExternalStorageDirectory().toString() + "/sample.wav"
 
+    private var permissionToRecordAccepted = false
+    private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO)
+
+
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
 
 
         recordButton.setOnClickListener {
@@ -47,40 +61,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    
 
 
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
 
-//    fun startRecord() {
-//
-//        var wavFile: File? = File(filePath)
-//        Log.d("filepath", filePath)
-//        if (wavFile!!.exists()) {
-//            wavFile.delete()
-//            Log.d("hoge", "ifの実行")
-//        }
-//        wavFile = null
-//        try {
-//
-//            rec = MediaRecorder()
-//            rec!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-//            rec!!.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
-//            rec!!.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
-//            rec!!.setOutputFile(filePath)
-//            rec!!.prepare()
-//            rec!!.start()
-//            Log.d("hoge", "tryの実行")
-//
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            Log.d("hoge", "catchの実行")
-//        }
-//    }
+        )
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
+        }
+        if (!permissionToRecordAccepted) finish()
+    }
+
+
 
     private fun startRecord() {
         rec = MediaRecorder().apply {
+            Log.d("recの中身", rec.toString())
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setOutputFile(filePath)
@@ -93,6 +97,10 @@ class MainActivity : AppCompatActivity() {
             start()
         }
     }
+
+
+
+
 
 
     private fun stopRecord() {
