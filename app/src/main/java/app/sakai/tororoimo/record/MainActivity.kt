@@ -52,28 +52,45 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun startRecord() {
-        var wavFile: File? = File(filePath)
-        if (wavFile!!.exists()) {
-            wavFile.delete()
-            Log.d("hoge", "ifの実行")
-        }
-        wavFile = null
-        try {
+//    fun startRecord() {
+//
+//        var wavFile: File? = File(filePath)
+//        Log.d("filepath", filePath)
+//        if (wavFile!!.exists()) {
+//            wavFile.delete()
+//            Log.d("hoge", "ifの実行")
+//        }
+//        wavFile = null
+//        try {
+//
+//            rec = MediaRecorder()
+//            rec!!.setAudioSource(MediaRecorder.AudioSource.MIC)
+//            rec!!.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
+//            rec!!.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
+//            rec!!.setOutputFile(filePath)
+//            rec!!.prepare()
+//            rec!!.start()
+//            Log.d("hoge", "tryの実行")
+//
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            Log.d("hoge", "catchの実行")
+//        }
+//    }
 
-            rec = MediaRecorder()
-            rec!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-            rec!!.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
-            rec!!.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
-            rec!!.setOutputFile(filePath)
-            rec!!.prepare()
-            rec!!.start()
-            Log.d("hoge", "tryの実行")
-
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("hoge", "catchの実行")
+    private fun startRecord() {
+        rec = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setOutputFile(filePath)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.e("Log_tag", "prepare() failed")
+            }
+            start()
         }
     }
 
